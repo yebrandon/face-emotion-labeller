@@ -22,6 +22,7 @@ with open("results.csv", "w", newline="") as csv_file:
     writer = csv.writer(csv_file)
     for filename in os.listdir(IMGS_DIR_PATH):
         try:
+            results_count["total_images_processed"] += 1
             result = DeepFace.analyze(
                 img_path=(IMGS_DIR_PATH + filename),
                 actions="emotion",
