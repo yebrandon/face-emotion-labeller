@@ -11,8 +11,10 @@ results_count = {
     "sad": 0,
     "surprise": 0,
     "neutral": 0,
+    "several_faces_found": 0,
     "face_not_found": 0,
-    "total": 0,
+    "total_images_successful": 0,
+    "total_images_processed": 0,
 }
 
 # Write dominant emotion and emotion confidences for each image file to CSV
@@ -22,17 +24,21 @@ with open("results.csv", "w", newline="") as csv_file:
         try:
             result = DeepFace.analyze(
                 img_path=(IMGS_DIR_PATH + filename),
-                actions=["emotion"],
+                actions="emotion",
             )
         except ValueError:
             results_count["face_not_found"] += 1
+            continue
+
+        if len(result) > 1:
+            results_count["several_faces_found"] += 1
             continue
 
         emotion_confidences = result[0]["emotion"]
         dom_emotion = result[0]["dominant_emotion"]
         dom_emotion_confidence = emotion_confidences[dom_emotion]
         results_count[dom_emotion] += 1
-        results_count["total"] += 1
+        results_count["total_images_successful"] += 1
 
         writer.writerow(
             [filename, dom_emotion, dom_emotion_confidence, emotion_confidences]
